@@ -19,11 +19,15 @@ participant DSL
 participant Aggregation
 participant Suggester
 participant Reporting
+
 Stage ->> DSL: Call DSL step
 opt if fail
-	DSL -> Aggregation: capture the error and build info send to log aggregator
+	DSL ->> Aggregation: capture the error and build info send to log aggregator
+	Suggester ->> Aggregation: fetch the error and do regex match
+	Aggregation -->> Suggester: provide log
+	Suggester -x Reporting: give failure cause analysis and send log
 end
 opt if succeed
-	DSL --> Stage: Continue as usual
+	DSL ->> Stage: Continue as usual
 end
 ```
